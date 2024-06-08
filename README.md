@@ -71,7 +71,7 @@ Results:
 
 ![one_shot_pred](assets/samples_results/one_shot_pred.gif)
 
-You view it on [assets/samples_results/one_shot_pred.mp4](assets/samples_results/one_shot_pred.mp4).
+You can view it on [assets/samples_results/one_shot_pred.mp4](assets/samples_results/one_shot_pred.mp4).
 
 **2. Few-shot**
 
@@ -95,7 +95,7 @@ Results:
 
 ![few_shot_pred](assets/samples_results/few_shot_pred.gif)
 
-You view it on [assets/samples_results/few_shot_pred.mp4](assets/samples_results/few_shot_pred.mp4).
+You can view it on [assets/samples_results/few_shot_pred.mp4](assets/samples_results/few_shot_pred.mp4).
 
 **3. One-shot (Single Portrait)**
 
@@ -121,7 +121,7 @@ Results:
 
 ![one_shot_portrait_pred](assets/samples_results/one_shot_portrait_pred.gif)
 
-You view it on [assets/samples_results/one_shot_portrait_pred.mp4](assets/samples_results/one_shot_portrait_pred.mp4).
+You can view it on [assets/samples_results/one_shot_portrait_pred.mp4](assets/samples_results/one_shot_portrait_pred.mp4).
 
 Notes:
 

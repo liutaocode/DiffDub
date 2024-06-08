@@ -258,7 +258,7 @@ def demo_pipeline(one_shot,
         )
         
         # Image rendering and saving
-        image = pred[0].detach().permute(1,2,0).cpu().numpy()*255
+        image = pred[0].detach().permute(1,2,0).cpu().numpy() * 255
         image = image.astype(np.uint8)
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         cv2.imwrite(os.path.join(saved_to_pred_frame_path, "%05d.png"%(i)), image.astype(np.uint8))
@@ -283,7 +283,7 @@ if __name__ == "__main__":
     parser.add_argument('--reference_image_path', type=str, default="./assets/single_images/test001.png", help='When in one-shot mode, a fixed frame can be set as the object to be modified')
     args = parser.parse_args()
 
-# Call the demo_pipeline function with the arguments from args
+
 demo_pipeline(
     one_shot=args.one_shot,
     video_inference=args.video_inference,
