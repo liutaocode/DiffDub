@@ -48,7 +48,7 @@ Input: One video / Image + an audio
 
 Output: A new lip-synced video driven by the audio
 
-**One-shot**
+**1. One-shot**
 
 Only one frame from the video is taken as the reference frame (the code here randomly selects a frame from the video) to be used as the input for the reference lip latent in the second stage.
 
@@ -73,7 +73,7 @@ Results:
 
 You view it on [assets/samples_results/one_shot_pred.mp4](assets/samples_results/one_shot_pred.mp4).
 
-**Few-shot**
+**2. Few-shot**
 
 Take a segment of the video as reference frames (the code here takes the first 3 seconds of the video, totaling 75 frames) to be used as the input for the reference lip latent in the second stage. (More reference frames can provide finer lip details, but may be limited by the training data, resulting in an effect similar to one-shot in this repo)
 
@@ -97,7 +97,7 @@ Results:
 
 You view it on [assets/samples_results/few_shot_pred.mp4](assets/samples_results/few_shot_pred.mp4).
 
-**One-shot Under Single Portrait**
+**3. One-shot (Single Portrait)**
 
 This script is designed to test the effect of audio driving a single image, specifically for lip movement.
 
@@ -123,6 +123,7 @@ Results:
 
 You view it on [assets/samples_results/one_shot_portrait_pred.mp4](assets/samples_results/one_shot_portrait_pred.mp4).
 
+Notes:
 
 - To extract Hubert features for inference of your own audio, please refer to [this documentation](https://github.com/liutaocode/talking_face_preprocessing?tab=readme-ov-file#audio-feature-extraction) to obtain the Hubert feature. We also provide the pre-extracted features for the audios in `test_demos/audios` at [URL](https://huggingface.co/taocode/diffdub/tree/main/assets/samples) for your testing. 
 - The examples provided in this URL are unseen and have not been trained on.
