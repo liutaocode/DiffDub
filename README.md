@@ -172,7 +172,6 @@ An intuitive suggestion is to increase the dataset size, for example, by adding 
   year={2024},
   organization={IEEE}
 }
-
 ```
 
 ## Acknowledgments
@@ -185,14 +184,9 @@ We also thank [cpdu](https://github.com/cpdu) and [azuredsky](https://github.com
 
 ```
 1. This library's code is not a formal product, and we have not tested all use cases; therefore, it cannot be directly offered to end-service customers.
-
 2. The main purpose of making our code public is to facilitate academic demonstrations and communication. Any use of this code to spread harmful information is strictly prohibited.
-
 3. Please use this library in compliance with the terms specified in the license file and avoid improper use.
-
 4. When using the code, please follow and abide by local laws and regulations.
-
 5. During the use of this code, you will bear the corresponding responsibility. We are not responsible for the generated results.
-
 6. The materials on this page are for academic use only. Please do not use them for other purposes.
 ```
