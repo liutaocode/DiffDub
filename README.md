@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/paper_demo.png" alt="Demo Image" width="30%" onerror="this.onerror=null; this.src='assets/placeholder.png'">
+  <img src="assets/paper_demo.png" alt="Demo Image" width="60%" onerror="this.onerror=null; this.src='assets/placeholder.png'">
 </p>
 
 Scenario: "Mouth Replacement" "Lip Editing", suitable for video translation, live streaming, etc.
