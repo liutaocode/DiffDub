@@ -23,6 +23,8 @@ pip install -r requirements.txt
 
 Please download the checkpoint from [URL](https://huggingface.co/taocode/diffdub/tree/main/assets) and place them into the following folder.
 
+(Alternatively, you can run `bash auto_download_ckpt.sh` to automatically download them using [git lfs](https://git-lfs.com/).)
+
 ```
 assets/checkpoints/
 ├── stage1.ckpt 
