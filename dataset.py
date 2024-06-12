@@ -47,7 +47,7 @@ class HDTFDataset(Dataset):
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
 
-        # augumenatations for condition
+        # image augmentations for the condition
         self.condtion_transform = A.Compose([
             A.HorizontalFlip(p=0.5),
             A.ColorJitter(p=0.3),
@@ -108,7 +108,7 @@ class HDTFDataset(Dataset):
 
         return ori_img, 1 - binary_matrix, cv2_image_aug['image']
     
-    # mouth area (with nose) + eye gudiance
+    # mouth area (with nose) + eye guidance
     def get_input_condtion(self, ori_img, landmarks):
 
         lists = []
@@ -213,7 +213,7 @@ class HDTFDataset(Dataset):
         image_array, masked_rect, img_condition = self.get_input_aug(cv2_image_resized, landmarks)
         
         if self.cond_with_eye:
-            # add eye as the gudiance 
+            # add eye as the guidance 
             img_condition = self.get_input_condtion(cv2_image_resized, landmarks)
 
         return self.to_Image(image_array), self.to_Image(img_condition), masked_rect, image_array
