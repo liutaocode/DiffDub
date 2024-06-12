@@ -1,3 +1,4 @@
 __pycache__
 assets/samples
 *.ckpt
+checkpoints

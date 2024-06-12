@@ -283,7 +283,7 @@ class TrainConfig(BaseConfig):
 
     def make_dataset(self, path=None, **kwargs):
         if self.data_name == 'HDTF':
-            imgdataset = HDTFDataset(self.img_data_path, self.img_size, self.nose_mouth_chin_path, self.landmark_data_path, self.meta_info, N_frames=self.N_frames, N_state_rand=self.N_state_rand, visualized=self.visualized, cond_has_nose=self.cond_has_nose, **kwargs)
+            imgdataset = HDTFDataset(self.img_data_path, self.img_size, self.landmark_data_path, N_frames=self.N_frames, cond_with_eye=self.cond_with_eye, **kwargs)
             return imgdataset
         else:
             raise NotImplementedError()

@@ -7,66 +7,47 @@ from torchvision import transforms
 import random
 import albumentations as A
 import numpy as np
-import json
+from tqdm import tqdm
 
 class HDTFDataset(Dataset):
     def __init__(
         self,
         folder,
         image_size,
-        nose_mouth_chin_path,
         landmark_data_path,
-        meta_info,
         N_frames=1,
-        N_state_rand=False,
-        visualized=False,
-        with_max_frame=10,
-        cond_has_nose=False,
-        exts=['png', 'jpeg'],
+        cond_with_eye=True,
     ):
         super().__init__()
         
-        self.folder = folder
+        self.png_image_folder = folder
         self.image_size = image_size
         self.landmark_data_path = landmark_data_path
-        self.json_obj = json.loads(open(nose_mouth_chin_path).read())
-        self.N_frames = N_frames,
-        self.N_state_rand = N_state_rand,
-        self.visualized = visualized
-        self.with_max_frame = with_max_frame
-        self.cond_has_nose = cond_has_nose
+        self.N_frames = N_frames
+        self.cond_with_eye = cond_with_eye
 
-        if landmark_data_path.endswith(".json"):
-            self.landmark_obj = json.loads(open(landmark_data_path).read())
-            print('read from json')
-        else:
-            self.landmark_obj = None
-            print('not read from json')
-        
-        train_set = set()
-        for line in open(meta_info):
-            train_set.add(line.split()[0])
+        self.test_ids = set(['WDA_BernieSanders_000','WRA_CoryGardner0_000','WDA_ChrisVanHollen0_000','WDA_RonWyden1_000','WDA_CarolynMaloney1_000','WRA_MikeEnzi_000','WDA_MikeDoyle_000', 'RD_Radio34_006','RD_Radio51_000','RD_Radio30_000','WRA_LamarAlexander0_000','RD_Radio35_000','WRA_BillCassidy0_000','RD_Radio34_007','RD_Radio56_000','RD_Radio34_008','RD_Radio34_005','WRA_PeterRoskam0_000','WRA_LamarAlexander_000','RD_Radio43_000','RD_Radio45_000','RD_Radio28_000','RD_Radio41_000','RD_Radio32_000','RD_Radio50_000'])
+        self.training_items = []
+        self.video_clip_dict = dict()
 
-        self.items = []
-        self.file_lists_dict = dict()
-        for filename in self.json_obj.keys():
-            self.file_lists_dict[filename] = []
-            for txtfile in self.json_obj[filename]:
-                txtpath = txtfile.replace(".txt", ".png")
-                
-                if filename in train_set:
-                    self.file_lists_dict[filename].append(txtpath)
-                    if self.landmark_obj == None:
-                        self.items.append((filename, txtfile, txtpath, None))
-                    else:
-                        self.items.append((filename, txtfile, txtpath, self.landmark_obj[filename][txtfile]))            
-            random.shuffle(self.file_lists_dict[filename])
+       
+        for video_clip_name in tqdm(os.listdir(self.png_image_folder)):
+            if video_clip_name.replace('_25fps', '') in self.test_ids:
+                continue
+
+            self.video_clip_dict[video_clip_name] = []
+            for image_name in os.listdir(os.path.join(self.png_image_folder, video_clip_name)):
+                image_path = os.path.join(self.png_image_folder, video_clip_name, image_name)
+                landmark_path = os.path.join(self.landmark_data_path, video_clip_name, f"{os.path.splitext(image_name)[0]}.txt")
+                self.training_items.append((video_clip_name, image_path, landmark_path))
+                self.video_clip_dict[video_clip_name].append(image_path)
 
         self.normlize = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
- 
+
+        # augumenatations for condition
         self.condtion_transform = A.Compose([
             A.HorizontalFlip(p=0.5),
             A.ColorJitter(p=0.3),
@@ -81,24 +62,11 @@ class HDTFDataset(Dataset):
             )
         ])
 
-
     def to_Image(self, cv2_obj):
         img_array_ori = cv2_obj.astype(np.uint8)
         img_masked = Image.fromarray(img_array_ori)
         img = img_masked.convert('RGB')
         return img
-    
-    def new_rec(self, key_points):
-        x_lists, y_lists = [], []
-        for x,y in key_points:
-            x_lists.append(x)
-            y_lists.append(y)
-        
-        x1 = min(x_lists)
-        y1 = min(y_lists)
-        x2 = max(x_lists)
-        y2 = max(y_lists)
-        return x1,y1,x2,y2
     
     def get_surrounding_axis(self, matrix):
         x_lists, y_lists = [], []
@@ -110,12 +78,12 @@ class HDTFDataset(Dataset):
                     y_lists.append(y)
         return min(x_lists), max(x_lists), min(y_lists), max(y_lists)
             
-    
+    # mouth area (with nose) only
     def get_input_aug(self, ori_img, landmarks):
 
         lists = []
-        lists.append([landmarks[6][0], landmarks[30][1]]) # eyes modified here
-        lists.append([landmarks[10][0], landmarks[30][1]]) # eyes modified here
+        lists.append([landmarks[6][0], landmarks[30][1]]) 
+        lists.append([landmarks[10][0], landmarks[30][1]]) 
         lists.append(landmarks[10])
         lists.append([landmarks[8][0],landmarks[8][1]+5])
         lists.append(landmarks[6])
@@ -140,11 +108,12 @@ class HDTFDataset(Dataset):
 
         return ori_img, 1 - binary_matrix, cv2_image_aug['image']
     
+    # mouth area (with nose) + eye gudiance
     def get_input_condtion(self, ori_img, landmarks):
 
         lists = []
-        lists.append([landmarks[6][0], landmarks[21][1]]) # eyes modified here
-        lists.append([landmarks[10][0], landmarks[21][1]]) # eyes modified here
+        lists.append([landmarks[6][0], landmarks[21][1]]) 
+        lists.append([landmarks[10][0], landmarks[21][1]]) 
         lists.append(landmarks[10])
         lists.append([landmarks[8][0],landmarks[8][1]+5])
         lists.append(landmarks[6])
@@ -169,7 +138,7 @@ class HDTFDataset(Dataset):
 
         return cv2_image_aug['image']
     
-    def scale_to_reso(self, origin_axis, original_height, original_width, to_reso):
+    def scale_to_specific_resolution(self, origin_axis, original_height, original_width, to_reso):
         x, y = origin_axis
         to_x, to_y = x/original_width*to_reso, y/original_height*to_reso
         to_x = int(to_x)
@@ -178,54 +147,38 @@ class HDTFDataset(Dataset):
         return (to_x, to_y)
         
     def __len__(self):
-        return len(self.items)
+        return len(self.training_items)
         
-    def get_landmarks_single(self, height, width, landmark_path):
+    def get_landmarks_from_path(self, height, width, landmark_path):
         
         landmarks = []
         for line in open(landmark_path):
             items = line.replace("\n", "").split()
-            out_points = self.scale_to_reso((int(items[0]), int(items[1])), height, width, self.image_size)
-            landmarks.append(out_points)
-            
-        assert len(landmarks) == 68
-        return landmarks
-    
-    def get_landmarks(self, height, width, ori_landmarks):
-        
-        landmarks = []
-        for x, y in ori_landmarks:
-            out_points = self.scale_to_reso((int(x), int(y)), height, width, self.image_size)
+            out_points = self.scale_to_specific_resolution((int(items[0]), int(items[1])), height, width, self.image_size)
             landmarks.append(out_points)
             
         assert len(landmarks) == 68
         return landmarks
 
     def __getitem__(self, index):
-        filename, txtpath, imgpath, landmarks  = self.items[index]
-        mapping = self.json_obj[filename][txtpath]
-        nose, lip, chin, left, right, height, width = mapping['nose'], mapping['lip'], mapping['chin'], mapping['left'], mapping['right'] ,mapping['height'] ,mapping['width']
+        clip_name, image_path, landmark_path  = self.training_items[index]
 
-        path = os.path.join(self.folder, filename, imgpath)
-        if landmarks == None:
-            landmark_path = os.path.join(self.landmark_data_path, filename, txtpath)
-            landmarks = self.get_landmarks_single(height, width, landmark_path)
-        else:
-            landmarks = self.get_landmarks(height, width, landmarks)
-        
-        avoid_set = set()
-        avoid_set.add(imgpath)
+        img = cv2.imread(image_path)
+        height, width = img.shape[:2]
+        landmarks = self.get_landmarks_from_path(height, width, landmark_path)
+
+        # random pick reference frame
+        black_list_set = set()
+        black_list_set.add(image_path)
         ref_lists = []
-
-        if self.N_frames[0] != 0:
-            for i in range(self.N_frames[0]): # self.N_frames is a tuple
+        if self.N_frames != 0:
+            for _ in range(self.N_frames): # self.N_frames is a tuple
                 while True:
-                    randindex = random.randint(0, len(self.file_lists_dict[filename])-1)
-                    ref_name = self.file_lists_dict[filename][randindex]
-                    if ref_name not in avoid_set:
-                        avoid_set.add(ref_name)
+                    randindex = random.randint(0, len(self.video_clip_dict[clip_name])-1)
+                    ref_image_path = self.video_clip_dict[clip_name][randindex]
+                    if ref_image_path not in black_list_set:
+                        black_list_set.add(ref_image_path)
                         
-                        ref_image_path = os.path.join(self.folder, filename, ref_name)
                         ref_img = self.get_ref_image(ref_image_path)
                         ref_img = self.normlize(ref_img)
                         ref_lists.append(ref_img)
@@ -233,10 +186,11 @@ class HDTFDataset(Dataset):
             
         ref_img = np.concatenate(ref_lists, axis=0)
         
-        img, con_img, masked_rect, image_array = self.get_ori_cond_image(path, landmarks)
+        img, con_img, masked_rect, _ = self.get_ori_cond_image(image_path, landmarks)
         
         img = self.normlize(img)
         con_img = self.normlize(con_img)
+
         if ref_img is None:
             return {'img': img, 'index': index, 'condtion': con_img, 'mouth_masked': masked_rect}
         else:
@@ -258,7 +212,8 @@ class HDTFDataset(Dataset):
 
         image_array, masked_rect, img_condition = self.get_input_aug(cv2_image_resized, landmarks)
         
-        if self.cond_has_nose:
+        if self.cond_with_eye:
+            # add eye as the gudiance 
             img_condition = self.get_input_condtion(cv2_image_resized, landmarks)
 
         return self.to_Image(image_array), self.to_Image(img_condition), masked_rect, image_array

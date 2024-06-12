@@ -148,7 +148,8 @@ This model is not a final product. Due to the model being trained only on HDTF, 
 ## Suggestions
 
 <details><summary>1. Suggestions on Training the Model.</summary>
-We have provided part of the training code for your reference. Due to differences in training environments and data processing methods, we cannot guarantee that the above code will run quickly on your training device. Our main modification is adding a mask to the <a href='https://github.com/phizaz/diffae'>diffae</a> framework. When training the first stage rendering model, we recommend referring to the training process of this library. (Please note that it is essential to use the ffhq256 pre-trained model from <a href='https://github.com/phizaz/diffae'>diffae</a> or our checkpoint as the initialization parameter for training; otherwise, the new model will be hard to converge). The second stage of training is much easier, involving only an MSE loss. Additionally, we used different versions of Lightning for the first and second stages of training: 1.4.5 for the former (consistent with diffae) and 2.0.6 for the latter.
+We have provided part of the training code for your reference. Due to differences in training environments and data processing methods, we cannot guarantee that the above code will run quickly on your training device. Our main modification is adding a mask to the <a href='https://github.com/phizaz/diffae'>diffae</a> framework. When training the first stage rendering model, we recommend referring to the training process of this library. (Please note that it is essential to use the [ffhq256 pre-trained model (named: last.ckpt)](https://vistec-my.sharepoint.com/:f:/g/personal/nattanatc_pro_vistec_ac_th/Ev2D_RNV2llIvm2yXyKgUxAB6w8ffg0C9NWSOtFqPMYQuw?e=f2kWUa) from <a href='https://github.com/phizaz/diffae'>diffae</a> or our checkpoint as the initialization parameter for training; otherwise, the new model will be hard to converge). The second stage of training is much easier, involving only an MSE loss. Additionally, we used different versions of Lightning for the first and second stages of training: 1.4.5 for the former (consistent with diffae) and 2.0.6 for the latter.
+
 </details>
 
 <details><summary>2. Suggestions to Speed Up the Model.</summary>
@@ -162,6 +163,11 @@ Try retraining the first stage with the image size set to 512. After completing 
 <details><summary>4. Suggestions for Future Improvements.</summary>
 An intuitive suggestion is to increase the dataset size, for example, by adding multi-view and multi-language datasets, which can enhance the model's generalization ability in different scenarios. Additionally, the face bounding box can be further optimized, as it does not always cover the chin and throat areas well in some conditions.
 </details>
+
+
+## Updates
+
+- **2025-06-12**: We have refined the training code for the first stage and provided the [pretrained FFHQ model](https://github.com/phizaz/diffae) along with a sample training dataset. You can organize your training data similarly to the provided samples.
 
 ## Citation
 

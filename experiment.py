@@ -67,14 +67,14 @@ class Rendering_Model(pl.LightningModule):
         if conf.pretrain is not None:
             selfState = self.state_dict()
 
-            print(f'loading pretrain ... {conf.pretrain.name}')
-            state = torch.load(conf.pretrain.path, map_location='cpu')
+            print(f'loading pretrain ... {conf.pretrain}')
+            state = torch.load(conf.pretrain, map_location='cpu')
             print('step:', state['global_step'])
             state['state_dict']['x_T'] = torch.randn(conf.sample_size, 3, conf.img_size, conf.img_size)
             state['state_dict']['sample_size']= conf.sample_size
-            # self.load_state_dict(state['state_dict'], strict=False)
+
             state = state['state_dict']
-            # import pdb;pdb.set_trace()
+
             for name, param in state.items():
                 origName = name;
                 if name not in selfState:
