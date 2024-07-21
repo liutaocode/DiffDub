@@ -167,7 +167,7 @@ An intuitive suggestion is to increase the dataset size, for example, by adding 
 
 ## Updates
 
-- **2025-06-12**: We have refined the training code for the first stage and provided the [pretrained FFHQ model](https://github.com/phizaz/diffae) along with a sample training dataset. You can organize your training data similarly to the provided samples.
+- **2024-06-12**: We have refined the training code for the first stage and provided the [pretrained FFHQ model](https://github.com/phizaz/diffae) along with a sample training dataset. You can organize your training data similarly to the provided samples.
 
 ## Citation
 
